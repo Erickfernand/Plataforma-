@@ -1,66 +1,178 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma Estudantil</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1abc9c, #16a085);
-            margin: 0;
-            padding: 0;
-            color: #fff;
+  <meta charset="UTF-8" />
+  <title>Plataforma Estudantil</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #login-area, #app { max-width: 600px; margin: auto; }
+    #app { display: none; }
+    nav button { margin-right: 10px; padding: 10px 15px; cursor: pointer; }
+    section { margin-top: 20px; }
+    textarea { width: 100%; height: 100px; }
+    ul { padding-left: 20px; }
+    input[type="text"] { width: 80%; padding: 5px; }
+    .material-item { margin-bottom: 5px; }
+    .material-item input { width: 70%; }
+    .material-item button { margin-left: 5px; }
+    #logout { float: right; cursor: pointer; color: red; }
+  </style>
+</head>
+<body>
+
+  <div id="login-area">
+    <h2>Login</h2>
+    <label>Usuário: <input type="text" id="username" /></label><br /><br />
+    <label>Senha: <input type="password" id="password" /></label><br /><br />
+    <button onclick="login()">Entrar</button>
+    <p id="login-msg" style="color:red;"></p>
+  </div>
+
+  <div id="app">
+    <h1>Plataforma Estudantil <span id="logout" onclick="logout()">[Sair]</span></h1>
+
+    <nav>
+      <button onclick="showSection('boletim')">Boletim</button>
+      <button onclick="showSection('disciplinas')">Disciplinas</button>
+      <button onclick="showSection('horario')">Horário</button>
+      <button onclick="showSection('carga')">Carga Horária</button>
+      <button onclick="showSection('info')">Informações do Aluno</button>
+      <button onclick="showSection('materiais')">Materiais de Estudo</button>
+    </nav>
+
+    <section id="boletim" style="display:none;">
+      <h2>Boletim</h2>
+      <textarea id="boletim-text"></textarea><br />
+      <button onclick="saveContent('boletim')">Salvar</button>
+    </section>
+
+    <section id="disciplinas" style="display:none;">
+      <h2>Disciplinas do Curso</h2>
+      <textarea id="disciplinas-text"></textarea><br />
+      <button onclick="saveContent('disciplinas')">Salvar</button>
+    </section>
+
+    <section id="horario" style="display:none;">
+      <h2>Horário</h2>
+      <textarea id="horario-text"></textarea><br />
+      <button onclick="saveContent('horario')">Salvar</button>
+    </section>
+
+    <section id="carga" style="display:none;">
+      <h2>Carga Horária</h2>
+      <textarea id="carga-text"></textarea><br />
+      <button onclick="saveContent('carga')">Salvar</button>
+    </section>
+
+    <section id="info" style="display:none;">
+      <h2>Informações do Aluno</h2>
+      <textarea id="info-text"></textarea><br />
+      <button onclick="saveContent('info')">Salvar</button>
+    </section>
+
+    <section id="materiais" style="display:none;">
+      <h2>Materiais de Estudo</h2>
+      <input type="text" id="material-input" placeholder="Colar link ou título do material" />
+      <button onclick="addMaterial()">Adicionar</button>
+      <ul id="materiais-list"></ul>
+    </section>
+  </div>
+
+  <script>
+    // Usuário e senha fixos (login fake)
+    const USER = 'kaik';
+    const PASS = '1234';
+
+    function login() {
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+      const msg = document.getElementById('login-msg');
+
+      if(u === USER && p === PASS){
+        document.getElementById('login-area').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        msg.textContent = '';
+
+        loadAll();
+        showSection('boletim');
+      } else {
+        msg.textContent = 'Usuário ou senha incorretos.';
+      }
+    }
+
+    function logout() {
+      document.getElementById('login-area').style.display = 'block';
+      document.getElementById('app').style.display = 'none';
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+    }
+
+    function showSection(id) {
+      const sections = document.querySelectorAll('section');
+      sections.forEach(s => s.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+
+    // Salvar texto no localStorage para persistir (só localmente)
+    function saveContent(section) {
+      const text = document.getElementById(section + '-text').value;
+      localStorage.setItem(section, text);
+      alert('Salvo!');
+    }
+
+    function loadAll() {
+      ['boletim','disciplinas','horario','carga','info'].forEach(section => {
+        const saved = localStorage.getItem(section);
+        if(saved){
+          document.getElementById(section + '-text').value = saved;
         }
-        header {
-            text-align: center;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            background: rgba(0,0,0,0.2);
-        }
-        .menu {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 15px;
-        }
-        button {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 15px;
-            font-size: 16px;
-            color: white;
-            width: 140px;
-            height: 120px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: 0.3s;
-            backdrop-filter: blur(5px);
-        }
-        button:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.05);
-        }
-        button i {
-            font-size: 30px;
-            margin-bottom: 8px;
-        }
-        .conteudo {
-            display: none;
-            background: white;
-            color: black;
-            padding: 20px;
-            margin: 15px;
-            border-radius: 12px;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
-            text-align: left;
-            animation: fadeIn 0.3s ease-in-out;
+      });
+
+      loadMaterials();
+    }
+
+    // Materiais de estudo
+    function addMaterial() {
+      const input = document.getElementById('material-input');
+      const val = input.value.trim();
+      if(val === '') return alert('Digite o título ou link do material.');
+
+      let materiais = JSON.parse(localStorage.getItem('materiais') || '[]');
+      materiais.push(val);
+      localStorage.setItem('materiais', JSON.stringify(materiais));
+      input.value = '';
+      loadMaterials();
+    }
+
+    function loadMaterials() {
+      let materiais = JSON.parse(localStorage.getItem('materiais') || '[]');
+      const ul = document.getElementById('materiais-list');
+      ul.innerHTML = '';
+      materiais.forEach((m, i) => {
+        const li = document.createElement('li');
+        li.className = 'material-item';
+        li.innerHTML = `<input type="text" value="${m}" onchange="editMaterial(${i}, this.value)" />
+                        <button onclick="removeMaterial(${i})">Excluir</button>`;
+        ul.appendChild(li);
+      });
+    }
+
+    function editMaterial(index, value) {
+      let materiais = JSON.parse(localStorage.getItem('materiais') || '[]');
+      materiais[index] = value;
+      localStorage.setItem('materiais', JSON.stringify(materiais));
+    }
+
+    function removeMaterial(index) {
+      let materiais = JSON.parse(localStorage.getItem('materiais') || '[]');
+      materiais.splice(index,1);
+      localStorage.setItem('materiais', JSON.stringify(materiais));
+      loadMaterials();
+    }
+  </script>
+
+</body>
+</html>
         }
         textarea, input {
             width: 100%;
