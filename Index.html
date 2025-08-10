@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Estudantil</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(0,0,0,0.2);
+        }
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 15px;
+        }
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 15px;
+            font-size: 16px;
+            color: white;
+            width: 140px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+        button i {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+        .conteudo {
+            display: none;
+            background: white;
+            color: black;
+            padding: 20px;
+            margin: 15px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+            text-align: left;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .salvar {
+            background: #1abc9c;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .salvar:hover {
+            background: #16a085;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<header>📚 Plataforma Estudantil</header>
+
+<div class="menu">
+    <button onclick="mostrar('boletim')"><i class="fa-solid fa-chart-line"></i>Boletim</button>
+    <button onclick="mostrar('disciplinas')"><i class="fa-solid fa-book"></i>Disciplinas</button>
+    <button onclick="mostrar('horario')"><i class="fa-solid fa-clock"></i>Horário</button>
+    <button onclick="mostrar('carga')"><i class="fa-solid fa-hourglass-half"></i>Carga Horária</button>
+    <button onclick="mostrar('info')"><i class="fa-solid fa-user"></i>Informações</button>
+</div>
+
+<div id="boletim" class="conteudo">
+    <h2>📊 Boletim</h2>
+    <textarea id="boletimTxt" placeholder="Digite as notas..."></textarea>
+    <button class="salvar" onclick="salvar('boletim')">Salvar</button>
+</div>
+
+<div id="disciplinas" class="conteudo">
+    <h2>📚 Disciplinas</h2>
+    <textarea id="disciplinasTxt" placeholder="Digite as disciplinas..."></textarea>
+    <button class="salvar" onclick="salvar('disciplinas')">Salvar</button>
+</div>
+
+<div id="horario" class="conteudo">
+    <h2>🕒 Horário</h2>
+    <textarea id="horarioTxt" placeholder="Digite o horário..."></textarea>
+    <button class="salvar" onclick="salvar('horario')">Salvar</button>
+</div>
+
+<div id="carga" class="conteudo">
+    <h2>⏳ Carga Horária</h2>
+    <textarea id="cargaTxt" placeholder="Digite a carga horária..."></textarea>
+    <button class="salvar" onclick="salvar('carga')">Salvar</button>
+</div>
+
+<div id="info" class="conteudo">
+    <h2>👤 Informações do Aluno</h2>
+    <input type="text" id="nome" placeholder="Nome do aluno">
+    <input type="text" id="matricula" placeholder="Matrícula">
+    <textarea id="obs" placeholder="Observações..."></textarea>
+    <button class="salvar" onclick="salvar('info')">Salvar</button>
+</div>
+
+<script>
+    function mostrar(id) {
+        document.querySelectorAll('.conteudo').forEach(div => div.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+        carregar(id);
+    }
+
+    function salvar(id) {
+        if (id === 'info') {
+            localStorage.setItem('nome', document.getElementById('nome').value);
+            localStorage.setItem('matricula', document.getElementById('matricula').value);
+            localStorage.setItem('obs', document.getElementById('obs').value);
+        } else {
+            localStorage.setItem(id, document.getElementById(id + 'Txt').value);
+        }
+        alert('💾 Salvo com sucesso!');
+    }
+
+    function carregar(id) {
+        if (id === 'info') {
+            document.getElementById('nome').value = localStorage.getItem('nome') || '';
+            document.getElementById('matricula').value = localStorage.getItem('matricula') || '';
+            document.getElementById('obs').value = localStorage.getItem('obs') || '';
+        } else {
+            document.getElementById(id + 'Txt').value = localStorage.getItem(id) || '';
+        }
+    }
+</script>
+
+</body>
+</html>
